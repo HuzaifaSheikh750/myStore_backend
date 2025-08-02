@@ -2,9 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const mongoose = require("mongoose");
 const connectDB = require("./config/db");
-const productsRouter = require("./routes/products.js");
-const errorHandler = require("./middlewares/errorHandler.js");
+const productsRouter = require("./routes/products");
+const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 
@@ -19,19 +20,32 @@ connectDB();
 // Routes
 app.use("/api/products", productsRouter);
 
+// Health Check Endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK", timestamp: new Date() });
+});
+
 // Error Handling Middleware
 app.use(errorHandler);
 
-// Start Server
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
-// Graceful Shutdown
-process.on("SIGINT", () => {
-  mongoose.connection.close(() => {
-    console.log("MongoDB connection closed");
-    process.exit(0);
+// Vercel requires module.exports for serverless functions
+// Only start local server if not in Vercel environment
+if (process.env.VERCEL_ENV !== "production") {
+  const PORT = process.env.PORT || 4000;
+  const server = app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
   });
-});
+
+  // Graceful Shutdown for local development
+  process.on("SIGINT", () => {
+    server.close(() => {
+      mongoose.connection.close(() => {
+        console.log("Server and MongoDB connection closed");
+        process.exit(0);
+      });
+    });
+  });
+}
+
+// Export for Vercel serverless functions
+module.exports = app;
