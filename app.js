@@ -3,9 +3,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const connectDB = require("./config/db");
-const productsRouter = require("./routes/products");
-const errorHandler = require("./middlewares/errorHandler");
+const connectDB = require("./config/db.js");
+const productsRouter = require("./routes/products.js");
+const errorHandler = require("./middlewares/errorHandler.js");
 
 const app = express();
 
