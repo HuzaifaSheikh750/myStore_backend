@@ -14,7 +14,7 @@ const priceSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: 'USD',
-    enum: ['USD', 'EUR', 'GBP'] // Supported currencies
+    enum: ['USD', 'EUR', 'GBP'] 
   }
 });
 
