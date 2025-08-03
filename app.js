@@ -10,7 +10,7 @@ const errorHandler = require("./middlewares/errorHandler.js");
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors( { origin: '*' }));
 app.use(bodyParser.json());
 app.use(express.json());
 
